@@ -26,6 +26,10 @@
 				      (bit-shift-left (nth rest-of-header 3) 7)
 				      (nth rest-of-header 4))]
 		   (printf "Header length = %d\n" header-size)
+		   (let [audio-frames-start (drop (+ 5 header-size) rest-of-header)]
+		     (let [sync-word (take 2 audio-frames-start)]
+		       
+		     ))
 		   (do (.close input-stream)		 
 		       (read-id3-tags (drop 5 rest-of-header) header-size)))))
 	   (pr "Not a valid MP3 with ID3v2 tags")))))
@@ -36,16 +40,20 @@
     (cons (apply + (map int (take 2 list-of-two-byte-characters)))
 	  (create-unicode-char-list (drop 2 list-of-two-byte-characters)))))
 
+(defn list-to-digit [l]
+  (map to-digit l))
+
+(defn to-digit [b]
+  (if b 1 0))
+
 (defn to-binary
-  ([x & [pad-width]]
-     (loop [input x nth-power 0 acc ()]
-       (if (> (Math/pow 2 nth-power) input)
-	 (if (nil? pad-width)
-	   acc
-	   (concat (take (- pad-width nth-power) (repeat 0)) acc))
-	 (if (bit-test x nth-power)
-	   (recur (- input (Math/pow 2 nth-power)) (+ nth-power 1) (cons 1 acc))
-	   (recur input (+ nth-power 1) (cons 0 acc)))))))
+  #^{:doc "This function inputs a number (x) and outputs a list of bits"}
+  ([pad-width x]
+     (map to-digit
+	  (reverse 
+	   (take pad-width 
+		 (map (partial bit-test x)
+		      (iterate inc 0)))))))
 
 (defn read-id3-tags [frame-array header-size]
   (loop [frame-no 0 frame-start frame-array total-bytes-so-far 0 acc (hash-map)]
