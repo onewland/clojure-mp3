@@ -1,5 +1,4 @@
-(ns mp3
-  (:use clojure.contrib.accumulators))
+(ns mp3)
 
 (def *debug* true)
 
