@@ -39,19 +39,16 @@
     (cons (apply + (map int (take 2 list-of-two-byte-characters)))
 	  (create-unicode-char-list (drop 2 list-of-two-byte-characters)))))
 
-(defn list-to-digit [l]
-  (map to-digit l))
-
 (defn to-digit [b]
   (if b 1 0))
 
 (defn to-binary
   #^{:doc "This function inputs a number (x) and outputs a list of bits"}
   ([pad-width x]
-     (map to-digit
+     (map to-digit 
 	  (reverse 
 	   (take pad-width 
-		 (map (partial bit-test x)
+		 (map (partial bit-test x) 
 		      (iterate inc 0)))))))
 
 (defn read-id3-tags [frame-array header-size]
